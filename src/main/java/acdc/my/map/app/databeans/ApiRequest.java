@@ -19,16 +19,6 @@ public class ApiRequest {
     private String clientToken;
     private Long clientId;
     private HashMap params;
-    private Connection conn;
-    private HashMap auctionSessionUser;
-
-    public HashMap getAuctionSessionUser() {
-        return auctionSessionUser;
-    }
-
-    public void setAuctionSessionUser(HashMap auctionSessionUser) {
-        this.auctionSessionUser = auctionSessionUser;
-    }
 
     public Long getClientId() {
         return clientId;
@@ -38,14 +28,6 @@ public class ApiRequest {
         this.clientId = clientId;
     }
     
-    public Connection getConn() {
-        return conn;
-    }
-
-    public void setConn(Connection conn) {
-        this.conn = conn;
-    }
-
     public String getClientToken() {
         return clientToken;
     }

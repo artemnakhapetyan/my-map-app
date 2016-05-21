@@ -1,5 +1,5 @@
 
-package ge.gov.msda.tbilisimap.utils.logging;
+package acdc.my.map.app.utils.logging;
 
 import java.util.Date;
 import java.util.UUID;
