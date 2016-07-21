@@ -5,24 +5,18 @@ import acdc.my.map.app.Config;
 import acdc.my.map.app.databeans.ApiRequest;
 import acdc.my.map.app.databeans.ApiResponse;
 import acdc.my.map.app.entities.postgre.MyMapGeometryObjects;
+import acdc.my.map.app.entities.postgre.ObjectGroup;
 import acdc.my.map.app.repositories.mongo.LogRepository;
 import acdc.my.map.app.repositories.postgre.MapRepository;
-import acdc.my.map.app.utils.exception.AppException;
-import acdc.my.map.app.utils.exception.AppSessionException;
 import acdc.my.map.app.utils.exception.ExceptionUtils;
-import ge.gov.msda.tbilisimap.utils.logging.AppLog;
-import ge.gov.msda.tbilisimap.utils.logging.LogType;
+import acdc.my.map.app.utils.logging.AppLog;
+import acdc.my.map.app.utils.logging.LogType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties.Session;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +37,9 @@ public class GlWS {
     
     @Autowired
     private MapRepository mapRepository;
+    
+    @Autowired
+    private CrudRepository repository;
     
     private static final String apiPrefix = "{"
             + "\"sessionId\": \"12345abcd\", "
@@ -78,6 +75,22 @@ public class GlWS {
         System.out.println(findOne);
         
         return new ApiResponse().setData(findOne);
+        
+    }
+    
+    @ApiImplicitParam(
+                name = "apiRequest", 
+                value = apiPrefix+apiSuffix)
+    @ApiOperation(value = "save object group", response = ApiResponse.class)
+    @RequestMapping(value = "/saveObjectGroup",  method = RequestMethod.POST)
+    public ApiResponse saveObjectGroup(
+            HttpServletRequest httpRequest,
+            @RequestBody ObjectGroup objectGroup
+            ){
+
+        repository.save(objectGroup);
+        
+        return new ApiResponse();
         
     }
     

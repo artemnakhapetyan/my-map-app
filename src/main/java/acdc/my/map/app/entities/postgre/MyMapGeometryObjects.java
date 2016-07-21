@@ -1,9 +1,12 @@
 
 package acdc.my.map.app.entities.postgre;
 
+import acdc.my.map.app.utils.spatial.GeometryDeserializer;
+import acdc.my.map.app.utils.spatial.GeometrySerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import org.hibernate.annotations.Type;
@@ -21,6 +24,8 @@ public class MyMapGeometryObjects implements Serializable {
     private int geometryObjType;
     
     @Type(type="org.hibernate.spatial.GeometryType")
+    @JsonSerialize(using = GeometrySerializer.class)
+    @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;
 
     public long getId() {
