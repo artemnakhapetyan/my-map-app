@@ -4,25 +4,18 @@ package acdc.my.map.app.services;
 import acdc.my.map.app.Config;
 import acdc.my.map.app.databeans.ApiRequest;
 import acdc.my.map.app.databeans.ApiResponse;
-import acdc.my.map.app.entities.postgre.MyMapGeometryObjects;
+import acdc.my.map.app.entities.postgre.Layers;
 import acdc.my.map.app.repositories.mongo.LogRepository;
-import acdc.my.map.app.repositories.postgre.MapRepository;
-import acdc.my.map.app.utils.exception.AppException;
-import acdc.my.map.app.utils.exception.AppSessionException;
+import acdc.my.map.app.repositories.postgre.LayersRepo;
 import acdc.my.map.app.utils.exception.ExceptionUtils;
-import ge.gov.msda.tbilisimap.utils.logging.AppLog;
-import ge.gov.msda.tbilisimap.utils.logging.LogType;
+import acdc.my.map.app.utils.logging.AppLog;
+import acdc.my.map.app.utils.logging.LogType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties.Session;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +35,7 @@ public class LayersWS {
     private LogRepository logRepository;
     
     @Autowired
-    private MapRepository mapRepository;
+    private LayersRepo layersRepo;
     
     private static final String apiPrefix = "{"
             + "\"sessionId\": \"12345abcd\", "
@@ -66,21 +59,47 @@ public class LayersWS {
     @ApiImplicitParam(
                 name = "apiRequest", 
                 value = apiPrefix+apiSuffix)
-    @ApiOperation(value = "add layer", response = ApiResponse.class)
-    @RequestMapping(value = "/addLayer",  method = RequestMethod.POST)
-    public ApiResponse addLayer(
+    @ApiOperation(value = "get base layers", response = ApiResponse.class)
+    @RequestMapping(value = "/getBaseLayers",  method = RequestMethod.POST)
+    public ApiResponse getBaseLayers(
             HttpServletRequest httpRequest,
             @RequestBody ApiRequest apiRequest
             ){
 
-        MyMapGeometryObjects findOne = mapRepository.findOne(1L);
+        List<Layers> layersList = layersRepo.findByIsBaseLrTrue();
         
-        System.out.println(findOne);
-        
-        return new ApiResponse().setData(findOne);
+        return new ApiResponse().setData(layersList);
         
     }
     
+    @ApiImplicitParam(
+                name = "apiRequest", 
+                value = apiPrefix+apiSuffix)
+    @ApiOperation(value = "get overlays", response = ApiResponse.class)
+    @RequestMapping(value = "/getOverlayLayers",  method = RequestMethod.POST)
+    public ApiResponse getOverlayLayers(
+            HttpServletRequest httpRequest,
+            @RequestBody ApiRequest apiRequest
+            ){
+
+        List<Layers> layersList = layersRepo.findByIsBaseLrFalse();
+        for(Layers layer: layersList){
+            
+            if(!layer.isIsBaseLr()){
+                
+                if(layer.isIsSelected()){
+                    layer.setOptions(layer.getOptions().replace("}", ",visibility: true}"));
+                }else{
+                    layer.setOptions(layer.getOptions().replace("}", ",visibility: false}"));
+                }
+                
+            }
+            
+        }
+        
+        return new ApiResponse().setData(layersList);
+        
+    }
     
     
     

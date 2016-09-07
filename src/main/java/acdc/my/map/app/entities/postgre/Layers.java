@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 public class Layers  implements Serializable{
     
     @Id
-    private long id;
+    private long lrId;
     
     @ManyToOne
     private MyMaps myMap;
@@ -34,6 +34,8 @@ public class Layers  implements Serializable{
     
     private boolean isSelected;
     
+    private boolean isBaseLr;
+    
     private String tableName;
     
     private boolean isActive;
@@ -50,6 +52,14 @@ public class Layers  implements Serializable{
     
     private int lrOrder;
 
+    public boolean isIsBaseLr() {
+        return isBaseLr;
+    }
+
+    public void setIsBaseLr(boolean isBaseLr) {
+        this.isBaseLr = isBaseLr;
+    }
+
     public MyMaps getMyMap() {
         return myMap;
     }
@@ -58,15 +68,13 @@ public class Layers  implements Serializable{
         this.myMap = myMap;
     }
 
-    public long getId() {
-        return id;
+    public long getLrId() {
+        return lrId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setLrId(long lrId) {
+        this.lrId = lrId;
     }
-
-    
 
     public long getTreeNodeId() {
         return treeNodeId;

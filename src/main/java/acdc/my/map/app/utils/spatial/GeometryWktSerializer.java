@@ -18,9 +18,7 @@ public class GeometryWktSerializer extends JsonSerializer<Geometry> {
     }
  
     void writeGeometry(Geometry geom, JsonGenerator gen) throws JsonGenerationException, IOException {
-        WKTWriter wktWriter = new WKTWriter();
-        String geomWkt = wktWriter.write(geom);
-        gen.writeString(geomWkt);
+        gen.writeString(GeometryUtil.toWkt(geom));
     }
  
 }

@@ -30,12 +30,7 @@ public class GeometryWktDeserializer extends JsonDeserializer<Geometry> {
     }
  
     Geometry geometry(JsonNode node) throws ParseException {
-        String geometryWkt = node.toString();
-        
-        WKTReader wktReader = new WKTReader();
-        Geometry result = wktReader.read(geometryWkt);
- 
-        return result;
+        return GeometryUtil.fromWkt(node.toString());
     }
  
 }
