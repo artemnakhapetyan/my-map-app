@@ -21,6 +21,8 @@ public interface AnalysisRepo extends CrudRepository<QmAdmRaionipolygon, Long>{
     @Query(value = "SELECT t.gid, "+
             "t.saxeli, "+
             "t.geom, "+
+            "t.infrastructure_index, "+
+            "t.combined_analysis_index, "+
             "(select count(1) from lr_crimes lc where ST_Contains(t.geom, lc.geometry)) as crimes_count"+
             " FROM qm_adm_raionipolygon t", nativeQuery = true)
     List<QmAdmRaionipolygon> findCrimesByRegions();
@@ -33,6 +35,8 @@ public interface AnalysisRepo extends CrudRepository<QmAdmRaionipolygon, Long>{
     @Query(value = "SELECT t.gid, " +
                 "t.saxeli, "+
                 "t.geom, "+
+                "t.crimes_count, "+
+                "t.combined_analysis_index, "+
 "	cast( " +
 "	(select sum(  " +
 "		ST_Distance(ST_TransForm(ST_Centroid(t.geom),32638),  " +
