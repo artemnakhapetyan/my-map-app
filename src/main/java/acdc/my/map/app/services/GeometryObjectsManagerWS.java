@@ -39,9 +39,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class GeometryObjectsManagerWS {
     
     @Autowired
-    private LogRepository logRepository;
-    
-    @Autowired
     private MapRepository mapRepository;
     
     private static final String apiPrefix = "{"
@@ -59,7 +56,7 @@ public class GeometryObjectsManagerWS {
         appLog.setProjectName(Config.PROJECT_NAME);
         appLog.setMethodName(request.getRequestURL().toString());
         appLog.setLogData(ExceptionUtils.stackTraceToString(exp));
-        logRepository.save(appLog);
+        LogRepository.save(appLog);
         return new ApiResponse(exp);
     }
     

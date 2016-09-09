@@ -14,6 +14,6 @@ public interface LayersRepo extends CrudRepository<Layers, Long>{
    
     List<Layers> findByIsBaseLrTrue();
     
-    List<Layers> findByIsBaseLrFalse();
+    List<Layers> findByIsBaseLrFalseOrderByLrOrderAsc();
     
 }

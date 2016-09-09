@@ -32,9 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class LayersWS {
     
     @Autowired
-    private LogRepository logRepository;
-    
-    @Autowired
     private LayersRepo layersRepo;
     
     private static final String apiPrefix = "{"
@@ -52,7 +49,7 @@ public class LayersWS {
         appLog.setProjectName(Config.PROJECT_NAME);
         appLog.setMethodName(request.getRequestURL().toString());
         appLog.setLogData(ExceptionUtils.stackTraceToString(exp));
-        logRepository.save(appLog);
+        LogRepository.save(appLog);
         return new ApiResponse(exp);
     }
     
@@ -82,7 +79,7 @@ public class LayersWS {
             @RequestBody ApiRequest apiRequest
             ){
 
-        List<Layers> layersList = layersRepo.findByIsBaseLrFalse();
+        List<Layers> layersList = layersRepo.findByIsBaseLrFalseOrderByLrOrderAsc();
         for(Layers layer: layersList){
             
             if(!layer.isIsBaseLr()){

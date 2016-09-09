@@ -33,9 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AnalysisWS {
     
     @Autowired
-    private LogRepository logRepository;
-        
-    @Autowired
     private AnalysisRepo analysisRepo;
     
     private static final String apiPrefix = "{"
@@ -53,7 +50,7 @@ public class AnalysisWS {
         appLog.setProjectName(Config.PROJECT_NAME);
         appLog.setMethodName(request.getRequestURL().toString());
         appLog.setLogData(ExceptionUtils.stackTraceToString(exp));
-        logRepository.save(appLog);
+        LogRepository.save(appLog);
         return new ApiResponse(exp);
     }
     
@@ -77,6 +74,25 @@ public class AnalysisWS {
         
     }
     
+    @ApiImplicitParam(
+                name = "apiRequest", 
+                value = apiPrefix+apiSuffix)
+    @ApiOperation(value = "analyze infrastructure index by tbilisi regions", response = ApiResponse.class)
+    @RequestMapping(value = "/analyzeInfrastructureIndexByTbilisiRegions",  method = RequestMethod.POST)
+    @Transactional
+    public ApiResponse analyzeInfrastructureIndexByTbilisiRegions(
+            HttpServletRequest httpRequest,
+            @RequestBody ApiRequest apiRequest
+            ){
+
+        List<QmAdmRaionipolygon> records = analysisRepo.findInfrastructureIndexByRegions();
+        for(QmAdmRaionipolygon qmAdmRaioni: records){
+            analysisRepo.updateInfrastructureIndex(qmAdmRaioni.getInfrastructureIndex(), qmAdmRaioni.getGid());
+        }
+        
+        return new ApiResponse().setData(records);
+        
+    }
     
     
 }

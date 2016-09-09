@@ -35,6 +35,26 @@ public class QmAdmRaionipolygon implements Serializable {
     private Geometry geom;
 
     private Integer crimesCount;
+    
+    private Integer infrastructureIndex;
+    
+    private Integer combinedAnalysisIndex;
+
+    public Integer getCombinedAnalysisIndex() {
+        return combinedAnalysisIndex;
+    }
+
+    public void setCombinedAnalysisIndex(Integer combinedAnalysisIndex) {
+        this.combinedAnalysisIndex = combinedAnalysisIndex;
+    }
+
+    public Integer getInfrastructureIndex() {
+        return infrastructureIndex;
+    }
+
+    public void setInfrastructureIndex(Integer infrastructureIndex) {
+        this.infrastructureIndex = infrastructureIndex;
+    }
 
     public QmAdmRaionipolygon() {
     }

@@ -34,9 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class MapsWS {
     
     @Autowired
-    private LogRepository logRepository;
-    
-    @Autowired
     private MyMapsRepository myMapsRepository;
     
     private static final String apiPrefix = "{"
@@ -54,7 +51,7 @@ public class MapsWS {
         appLog.setProjectName(Config.PROJECT_NAME);
         appLog.setMethodName(request.getRequestURL().toString());
         appLog.setLogData(ExceptionUtils.stackTraceToString(exp));
-        logRepository.save(appLog);
+        LogRepository.save(appLog);
         return new ApiResponse(exp);
     }
     

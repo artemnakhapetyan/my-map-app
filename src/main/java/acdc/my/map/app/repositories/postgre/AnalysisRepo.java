@@ -29,4 +29,23 @@ public interface AnalysisRepo extends CrudRepository<QmAdmRaionipolygon, Long>{
     @Query("update QmAdmRaionipolygon t set t.crimesCount = ?1 where t.gid = ?2")
     void updateCrimesCount(int crimesCount, long gid);
     
+    
+    @Query(value = "SELECT t.gid, " +
+                "t.saxeli, "+
+                "t.geom, "+
+"	cast( " +
+"	(select sum(  " +
+"		ST_Distance(ST_TransForm(ST_Centroid(t.geom),32638),  " +
+"		ST_TransForm(s.geometry ,32638))  " +
+"		) as infrastructure_index  " +
+"	 from lr_infrastructure s  " +
+"	) as bigint " +
+"	) as infrastructure_index " +
+" FROM qm_adm_raionipolygon t", nativeQuery = true)
+    List<QmAdmRaionipolygon> findInfrastructureIndexByRegions();
+    
+    @Modifying
+    @Query("update QmAdmRaionipolygon t set t.infrastructureIndex = ?1 where t.gid = ?2")
+    void updateInfrastructureIndex(int infrastructureIndex, long gid);
+    
 }

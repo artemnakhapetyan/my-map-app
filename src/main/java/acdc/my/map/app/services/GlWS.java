@@ -4,10 +4,12 @@ import acdc.my.map.app.Config;
 import acdc.my.map.app.databeans.ApiRequest;
 import acdc.my.map.app.databeans.ApiResponse;
 import acdc.my.map.app.entities.postgre.LrCrimes;
+import acdc.my.map.app.entities.postgre.LrInfrastructure;
 import acdc.my.map.app.entities.postgre.MyMapGeometryObjects;
 import acdc.my.map.app.entities.postgre.ObjectGroup;
 import acdc.my.map.app.repositories.mongo.LogRepository;
 import acdc.my.map.app.repositories.postgre.LrCrimesRepo;
+import acdc.my.map.app.repositories.postgre.LrInfrastructureRepo;
 import acdc.my.map.app.repositories.postgre.MapRepository;
 import acdc.my.map.app.utils.exception.ExceptionUtils;
 import acdc.my.map.app.utils.logging.AppLog;
@@ -41,14 +43,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class GlWS {
 
     @Autowired
-    private LogRepository logRepository;
-
-    @Autowired
     private MapRepository mapRepository;
 
     @Autowired
     private LrCrimesRepo lrCrimesRepo;
 
+    @Autowired
+    private LrInfrastructureRepo lrInfrastructureRepo;
+    
     private static final String apiPrefix = "{"
             + "\"sessionId\": \"12345abcd\", "
             + "\"moduleId\": \"2\", "
@@ -64,7 +66,7 @@ public class GlWS {
         appLog.setProjectName(Config.PROJECT_NAME);
         appLog.setMethodName(request.getRequestURL().toString());
         appLog.setLogData(ExceptionUtils.stackTraceToString(exp));
-        logRepository.save(appLog);
+        LogRepository.save(appLog);
         return new ApiResponse(exp);
     }
 
@@ -97,13 +99,15 @@ public class GlWS {
     ) throws ParseException {
 
         int cnt = (int) apiRequest.getParams().get("cnt");
+        
+        lrCrimesRepo.deleteAll();
 
         for (int i = 0; i < cnt; i++) {
             
             LrCrimes crime = new LrCrimes();
 
             Random rn = new Random();
-            int crimeType = rn.nextInt(10) + 1;
+            int crimeType = rn.nextInt(5) + 1;
 
             crime.setCrimeType(crimeType);
             crime.setCrimeDescription("test");
@@ -114,10 +118,53 @@ public class GlWS {
             coordinates.append(RandomUtils.myRandom(41.62964, 41.84205));
 
             Geometry crimePoint = GeometryUtil.fromWkt("POINT(" + coordinates + ")");
+            crimePoint.setSRID(4326);
 
             crime.setGeometry(crimePoint);
 
             lrCrimesRepo.save(crime);
+            
+        }
+
+        return new ApiResponse();
+
+    }
+    
+    @ApiImplicitParam(
+            name = "apiRequest",
+            value = apiPrefix + apiSuffix)
+    @ApiOperation(value = "generate random infrastructure", response = ApiResponse.class)
+    @RequestMapping(value = "/generateRandomInfrastructure", method = RequestMethod.POST)
+    public ApiResponse generateRandomInfrastructure(
+            HttpServletRequest httpRequest,
+            @RequestBody ApiRequest apiRequest
+    ) throws ParseException {
+
+        int cnt = (int) apiRequest.getParams().get("cnt");
+        
+        lrInfrastructureRepo.deleteAll();
+
+        for (int i = 0; i < cnt; i++) {
+            
+            LrInfrastructure infrastructure = new LrInfrastructure();
+
+            Random rn = new Random();
+            int infrastructureType = rn.nextInt(5) + 1;
+
+            infrastructure.setObjectType(infrastructureType);
+            infrastructure.setObjectDescription("test");
+
+            StringBuilder coordinates = new StringBuilder();
+            coordinates.append(RandomUtils.myRandom(44.61269, 44.98640));
+            coordinates.append(" ");
+            coordinates.append(RandomUtils.myRandom(41.62964, 41.84205));
+
+            Geometry crimePoint = GeometryUtil.fromWkt("POINT(" + coordinates + ")");
+            crimePoint.setSRID(4326);
+
+            infrastructure.setGeometry(crimePoint);
+
+            lrInfrastructureRepo.save(infrastructure);
             
         }
 
